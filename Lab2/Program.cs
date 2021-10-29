@@ -19,8 +19,12 @@ namespace Lab2
         public static bool IsBalanced(string s)
         {
             Stack<char> stack = new Stack<char>();
+            if (s.Length == 0)
+            {
+                return true;
+            }
 
-            foreach( char c in s)
+            foreach ( char c in s)
             {
                 // If opening symbol, then push onto stack
                 if ( c == '{' || c=='<' || c=='[' || c=='(' )
@@ -31,7 +35,11 @@ namespace Lab2
                 // If closing symbol, then see if it matches the top
                 else if (c == '}' || c == '>' || c == ']' || c == ')')
                 {
-                    if( Matches(stack.Peek(), c) )
+                    if (stack.Count == 0)
+                    {
+                        return false;
+                    }
+                    if ( Matches(stack.Peek(), c) )
                     {
                         stack.Pop();
                     }
@@ -61,9 +69,36 @@ namespace Lab2
 
         private static bool Matches(char open, char close)
         {
-            // do the matching
+            switch(close)
+            {
+                case ')':
+                    if (open == '(')
+                    {
+                        return true;
+                    }
+                    return false;
+                case '}':
+                    if (open == '{')
+                    {
+                        return true;
+                    }
+                    return false;
+                case ']':
+                    if (open == '[')
+                    {
+                        return true;
+                    }
+                    return false;
+                case '>':
+                    if (open == '<')
+                    {
+                        return true;
+                    }
+                    return false;
+                default:
+                    return false;
 
-            return true;
+            }
         }
 
         // Evaluate("5 3 11 + -")	// returns -9
@@ -72,27 +107,60 @@ namespace Lab2
         public static double? Evaluate(string s)
         {
             // parse into tokens (strings)
-
-            string[] tokens = s.Split();
-
-            Stack<double> stack = new Stack<double>();
-
-            // foreach token
-                // If token is an integer
-                // Push on stack
-
-                // If token is an operator
-                    // Pop twice and save both values
-                    // (if you can't pop twice, then return null)
-                    // Perform operation on 2 values (in the correct order)
-                    // Push the result on to stack
-
-
-            if( stack.Count != 1)
+            if (s.Length == 0)
             {
                 return null;
             }
 
+            string[] tokens = s.Split();
+
+            Stack<double> stack = new Stack<double>();
+            foreach (string token in tokens)
+            {
+                if (Double.TryParse(token, out double token1))
+                {
+                    stack.Push(token1);
+                }
+
+                if (token == "+" || token == "-" || token == "*" || token == "/")
+                    {
+                        if (stack.Count < 2)
+                        {
+                            return null;
+                        }
+                        else
+                        {
+                            double num2 = stack.Pop();
+                            double num1 = stack.Pop();
+                            if (token == "+")
+                            {
+                                stack.Push(num1 + num2);
+                            }
+                            else if (token == "-")
+                            {
+                                stack.Push(num1 - num2);
+                            }
+                            else if (token == "/")
+                            {
+                                stack.Push(num1 / num2);
+                            }
+                            else
+                            {
+                                stack.Push(num1 * num2);
+                            }
+
+                      
+                        }
+                    Console.WriteLine(stack.Peek());
+                }
+            }
+
+            Console.WriteLine(stack.Peek());
+            if ( stack.Count != 1)
+            {
+                return null;
+            }
+            Console.WriteLine(stack.Peek());
             return stack.Pop();
         }
 
